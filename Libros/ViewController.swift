@@ -5,14 +5,18 @@
 //  Created by Mananas on 3/12/25.
 //
 
+
 import UIKit
 
-class ViewController: UIViewController, UITableViewDataSource, UISearchBarDelegate {
+class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.dataSource = self
+        tableView.delegate = self
+        
         findBookByCategory(query:"")
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.delegate = self
@@ -33,9 +37,13 @@ class ViewController: UIViewController, UITableViewDataSource, UISearchBarDelega
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return works.count
+        
+
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        print("Mostrando celda:", indexPath.row)
+
         let cell = tableView.dequeueReusableCell(withIdentifier: "Book Cell", for: indexPath) as! BookViewCell
         let works = works[indexPath.row]
         cell.render(with: works)
@@ -44,23 +52,45 @@ class ViewController: UIViewController, UITableViewDataSource, UISearchBarDelega
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text, !text.isEmpty else { return }
+        let query = text.lowercased().replacingOccurrences(of: " ", with: "_")
         
         Task {
-                let books = await LibraryProvider.findBookByCategory(subject: text)
-                self.works = books        // <--- tu array de datos
-                self.tableView.reloadData()
+            let books = await LibraryProvider.findBookByCategory(subject: query)
+            
+            print("📚 Libros recibidos:", books.count)
+            for book in books {
+                print("➡️", book.title ?? "SIN TITULO")
             }
-        findBookByCategory(query: searchBar.text ?? "")
+            
+            // Actualizamos la tabla con los libros recibidos
+            self.works = books
+            self.tableView.reloadData()
+        }
+      
     }
     
     
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let detailViewController = segue.destination as! DetailViewController
-        let indexPath = tableView.indexPathForSelectedRow!
-        let book = works[indexPath.row]
-        detailViewController.works = book
-        tableView.deselectRow(at: indexPath, animated: true)
+       
+        
+        
+        if segue.identifier == "showDetail" {
+              let detailVC = segue.destination as! DetailViewController
+              
+              // Obtener el índice de la celda seleccionada desde el sender
+            guard let indexPath = tableView.indexPathForSelectedRow else { return }
+            
+         
+            tableView.deselectRow(at: indexPath, animated: true)
+              
+              // Pasar el libro seleccionado
+              detailVC.works = works[indexPath.row]
+          }
+        
+        
+        
+        
     }
 
 }

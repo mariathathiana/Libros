@@ -15,6 +15,9 @@ class LibraryProvider {
         guard let url = URL(string: "\(BASE_URL)/subjects/\(subject).json?details=true") else {
             return []
         }
+        
+        print("🔎 URL solicitada: \(url)")
+
 
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
@@ -39,6 +42,8 @@ class LibraryProvider {
             return []
         }
     }
+    
+    
 }
 
 

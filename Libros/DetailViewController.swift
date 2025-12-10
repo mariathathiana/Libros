@@ -20,7 +20,23 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        titleLabel.text = works.title
+            subjectLabel.text = works.subject?.first ?? "Sin categoría"
+            
+            if let coverId = works.cover_id {
+                let urlString = "https://covers.openlibrary.org/b/id/\(coverId)-M.jpg"
+                if let url = URL(string: urlString),
+                   let data = try? Data(contentsOf: url) {
+                    coverImageView.image = UIImage(data: data)
+                }
+            } else {
+                coverImageView.image = UIImage(systemName: "photo")
+            }
+
+        
+        
     }
+    
 
 
 }

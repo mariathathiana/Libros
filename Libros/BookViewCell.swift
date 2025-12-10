@@ -39,6 +39,9 @@ class BookViewCell: UITableViewCell {
             bookImageView.image = UIImage(systemName: "photo")
         }
         
+   
+
+        
     }
     
     private func loadImage(from urlString: String) {

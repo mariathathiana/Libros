@@ -43,7 +43,13 @@ class ViewController: UIViewController, UITableViewDataSource, UISearchBarDelega
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let text = searchBar.text ?? ""
+        guard let text = searchBar.text, !text.isEmpty else { return }
+        
+        Task {
+                let books = await LibraryProvider.findBookByCategory(subject: text)
+                self.works = books        // <--- tu array de datos
+                self.tableView.reloadData()
+            }
         findBookByCategory(query: searchBar.text ?? "")
     }
     

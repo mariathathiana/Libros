@@ -15,4 +15,11 @@ struct Book: Codable {
     let cover_id: Int?
     let cover_edition_key: String?
     let subject: [String]?
+    let authors: [Author]?
+    let key: String?
+}
+
+struct Author: Codable {
+    let name: String?
+    let key: String?
 }
